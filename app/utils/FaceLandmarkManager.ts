@@ -1,9 +1,15 @@
+import type { FaceLandmarkerResult } from "@mediapipe/tasks-vision";
 import {
   FaceLandmarker,
   FilesetResolver,
-  FaceLandmarkerResult,
   DrawingUtils,
 } from "@mediapipe/tasks-vision";
+
+const meshColor = "#f0f0f0";
+const faceOvalColor = "#0a84ff";
+const lipsColor = "#0a84ff";
+const lineWidth = 1.3;
+const meshLineWidth = 0.5;
 
 class FaceLandmarkManager {
   private static instance: FaceLandmarkManager = new FaceLandmarkManager();
@@ -57,12 +63,11 @@ class FaceLandmarkManager {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const drawingUtils = new DrawingUtils(ctx);
 
-    const lineWidth = 1.3;
     for (const landmarks of this.results.faceLandmarks) {
       drawingUtils.drawConnectors(
         landmarks,
         FaceLandmarker.FACE_LANDMARKS_TESSELATION,
-        { color: "#C0C0C070", lineWidth: lineWidth }
+        { color: meshColor, lineWidth: meshLineWidth }
       );
       drawingUtils.drawConnectors(
         landmarks,
@@ -87,12 +92,12 @@ class FaceLandmarkManager {
       drawingUtils.drawConnectors(
         landmarks,
         FaceLandmarker.FACE_LANDMARKS_FACE_OVAL,
-        { color: "#E0E0E0", lineWidth: lineWidth }
+        { color: faceOvalColor, lineWidth: lineWidth }
       );
       drawingUtils.drawConnectors(
         landmarks,
         FaceLandmarker.FACE_LANDMARKS_LIPS,
-        { color: "#E0E0E0", lineWidth: lineWidth }
+        { color: lipsColor, lineWidth: lineWidth }
       );
       drawingUtils.drawConnectors(
         landmarks,

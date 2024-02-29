@@ -29,8 +29,14 @@ export default function DrawLandmarkCanvas({
 
   return (
     <canvas
-      className="absolute"
-      style={{ width: width, height: height, transform: "scaleX(-1)" }}
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: width,
+        height: height,
+        transform: "scaleX(-1)",
+      }}
       ref={drawCanvasRef}
     ></canvas>
   );

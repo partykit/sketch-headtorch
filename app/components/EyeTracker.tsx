@@ -57,15 +57,14 @@ export default function EyeTracker() {
   }, []);
 
   return (
-    <div>
+    <div style={{ position: "relative" }}>
       <video
-        className="w-full h-auto"
         ref={videoRef}
         loop={true}
         muted={true}
         autoPlay={true}
         playsInline={true}
-        style={{ transform: "scaleX(-1)" }}
+        style={{ transform: "scaleX(-1)", filter: "grayscale(100%)" }}
       ></video>
       {videoSize && (
         <DrawLandmarkCanvas width={videoSize.width} height={videoSize.height} />
