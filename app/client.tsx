@@ -8,7 +8,7 @@ function App() {
   const [isTracking, setIsTracking] = useState(false);
 
   return (
-    <main>
+    <main style={{ width: "100%", minHeight: "100dvh", position: "relative" }}>
       <EyeTracker setIsTracking={setIsTracking} />
       {isTracking && <Debug />}
     </main>
