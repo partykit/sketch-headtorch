@@ -1,0 +1,10 @@
+{
+  "$schema": "https://www.partykit.io/schema.json",
+  "name": "sketch-headtorch",
+  "main": "party/server.ts",
+  "compatibilityDate": "2024-02-29",
+  "serve": {
+    "path": "public",
+    "build": "app/client.tsx"
+  }
+}
