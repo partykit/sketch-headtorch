@@ -2,7 +2,11 @@ import FaceLandmarkManager from "../utils/FaceLandmarkManager";
 import { useEffect, useRef, useState } from "react";
 import DrawLandmarkCanvas from "./DrawLandmarkCanvas";
 
-export default function EyeTracker() {
+export default function EyeTracker({
+  setIsTracking,
+}: {
+  setIsTracking: (isTracking: boolean) => void;
+}) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const lastVideoTimeRef = useRef(-1);
   const requestRef = useRef(0);
@@ -44,6 +48,9 @@ export default function EyeTracker() {
 
             // Start animation once video is loaded
             requestRef.current = requestAnimationFrame(animate);
+
+            // Let the rest of the app know that we are tracking
+            setIsTracking(true);
           };
         }
       } catch (e) {
@@ -57,14 +64,23 @@ export default function EyeTracker() {
   }, []);
 
   return (
-    <div style={{ position: "relative" }}>
+    <div
+      style={{
+        position: "relative",
+        maxWidth: "20rem",
+      }}
+    >
       <video
         ref={videoRef}
         loop={true}
         muted={true}
         autoPlay={true}
         playsInline={true}
-        style={{ transform: "scaleX(-1)", filter: "grayscale(100%)" }}
+        style={{
+          width: "100%",
+          transform: "scaleX(-1)",
+          filter: "grayscale(100%)",
+        }}
       ></video>
       {videoSize && (
         <DrawLandmarkCanvas width={videoSize.width} height={videoSize.height} />
