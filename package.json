@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "partykit dev --live",
-    "deploy": "partykit deploy"
+    "deploy": "partykit deploy --with-vars"
   },
   "dependencies": {
     "@mediapipe/tasks-vision": "^0.10.10",
@@ -23,6 +23,5 @@
     "@types/react-dom": "^18.2.19",
     "partykit": "^0.0.96",
     "typescript": "^5.3.3"
-  },
-  "team": "labs"
+  }
 }

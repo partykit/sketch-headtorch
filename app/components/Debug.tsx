@@ -144,46 +144,48 @@ export default function Debug() {
           &nbsp;
         </div>
       </div>
-      <h3>Debug</h3>
-      <details>
-        <summary>Face tracking</summary>
-        <ul>
-          <li>Head x: {middle.x}</li>
-          <li>Head y: {middle.y}</li>
-          <li>Left-right: {angleLeftRightDeg}</li>
-          <li>{`${scaleToRange(-angleLeftRightDeg, -50, 15) * 100}%`}</li>
-          <li>Up-down: {angleUpDownDeg}</li>
-          <li>{`${scaleToRange(-angleUpDownDeg, -6, 20) * 100}%`}</li>
-        </ul>
-      </details>
-      <details>
-        <summary>blendShapes</summary>
-        <ul>
-          <li>eyeLookOutLeft: {left}</li>
-          <li>eyeLookOutRight: {right}</li>
-          <li>eyeLookUpRight: {up}</li>
-          <li>eyeLookDownRight: {down}</li>
-        </ul>
-      </details>
-      <details>
-        <summary>Right eye</summary>
-        <pre>
-          {JSON.stringify(FaceLandmarker.FACE_LANDMARKS_RIGHT_EYE, null, 2)}
-        </pre>
-      </details>
-      <details>
-        <summary>Right iris</summary>
-        <pre>
-          {JSON.stringify(FaceLandmarker.FACE_LANDMARKS_RIGHT_IRIS, null, 2)}
-        </pre>
-        <div>Average X: {rightAverage.x}</div>
-        <div>Average Y: {rightAverage.y}</div>
-        <div>Average Z: {rightAverage.z}</div>
-      </details>
-      <details>
-        <summary>Detailed results</summary>
-        <div>Landmarks #: {results?.faceLandmarks[0]?.length}</div>
-        <pre>{JSON.stringify(results, null, 2)}</pre>
+      <details style={{ visibility: "hidden" }}>
+        <summary>Debug</summary>
+        <details>
+          <summary>Face tracking</summary>
+          <ul>
+            <li>Head x: {middle.x}</li>
+            <li>Head y: {middle.y}</li>
+            <li>Left-right: {angleLeftRightDeg}</li>
+            <li>{`${scaleToRange(-angleLeftRightDeg, -50, 15) * 100}%`}</li>
+            <li>Up-down: {angleUpDownDeg}</li>
+            <li>{`${scaleToRange(-angleUpDownDeg, -6, 20) * 100}%`}</li>
+          </ul>
+        </details>
+        <details>
+          <summary>blendShapes</summary>
+          <ul>
+            <li>eyeLookOutLeft: {left}</li>
+            <li>eyeLookOutRight: {right}</li>
+            <li>eyeLookUpRight: {up}</li>
+            <li>eyeLookDownRight: {down}</li>
+          </ul>
+        </details>
+        <details>
+          <summary>Right eye</summary>
+          <pre>
+            {JSON.stringify(FaceLandmarker.FACE_LANDMARKS_RIGHT_EYE, null, 2)}
+          </pre>
+        </details>
+        <details>
+          <summary>Right iris</summary>
+          <pre>
+            {JSON.stringify(FaceLandmarker.FACE_LANDMARKS_RIGHT_IRIS, null, 2)}
+          </pre>
+          <div>Average X: {rightAverage.x}</div>
+          <div>Average Y: {rightAverage.y}</div>
+          <div>Average Z: {rightAverage.z}</div>
+        </details>
+        <details>
+          <summary>Detailed results</summary>
+          <div>Landmarks #: {results?.faceLandmarks[0]?.length}</div>
+          <pre>{JSON.stringify(results, null, 2)}</pre>
+        </details>
       </details>
     </div>
   );

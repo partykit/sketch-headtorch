@@ -1,5 +1,5 @@
 export default function Frame(props: { children?: React.ReactNode }) {
-  const SIDE = 48; // in rem
+  const SIDE = 32; // in rem
 
   return (
     <div style={{ display: "flex", justifyItems: "center" }}>
@@ -13,8 +13,8 @@ export default function Frame(props: { children?: React.ReactNode }) {
           justifyItems: "space-between",
           overflow: "clip",
           cursor: "move",
-          height: `${SIDE}rem`,
           width: `${SIDE}rem`,
+          height: `${SIDE}rem`,
           borderRadius: `0.25rem`,
           borderWidth: `0.25rem`,
         }}

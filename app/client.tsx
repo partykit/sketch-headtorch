@@ -16,13 +16,22 @@ function App() {
 
   return (
     <PresenceProvider
-      room={pageId}
+      host="sketch-headtorch.genmon.partykit.dev"
+      room="default"
       presence={{
         name: "Anonymous User",
         color: "#0000f0",
       }}
     >
-      <main style={{ display: "flex", gap: "1rem" }}>
+      <main
+        style={{
+          display: "flex",
+          gap: "1rem",
+          padding: "0.5rem",
+          width: "100%",
+          height: "100%",
+        }}
+      >
         <div>
           <EyeTracker setIsTracking={setIsTracking} />
           {isTracking && <Debug />}

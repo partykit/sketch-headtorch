@@ -8,6 +8,7 @@ import type { ThreeElements } from "@react-three/fiber";
 import { useHelper, PerspectiveCamera } from "@react-three/drei";
 //import { useCursors } from "@/app/providers/cursors-context";
 import Logo, { Loader } from "./Logo";
+import { usePresence } from "../presence/presence-context";
 
 function Box(props: ThreeElements["mesh"]) {
   const meshRef = useRef<THREE.Mesh>(null!);
@@ -39,7 +40,7 @@ function CameraComponent(props) {
 function Light(props: { x: number; y: number; z: number; color: string }) {
   const rLight = useRef<THREE.SpotLight>(null!);
   //useHelper(rLight, THREE.SpotLightHelper, "red");
-
+  //console.log("Light", props.x, props.y, props.z, props.color);
   return (
     <>
       <spotLight
@@ -71,12 +72,30 @@ export default function Scene() {
   const rCanvas = useRef<HTMLCanvasElement>(null!);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [mouseInCanvas, setMouseInCanvas] = useState(false);
+  const { myself, otherUsers, updatePresence, synced, myId } = usePresence(
+    (state) => {
+      return {
+        myself: state.myself,
+        otherUsers: state.otherUsers,
+        updatePresence: state.updatePresence,
+        synced: state.synced,
+        myId: state.myId,
+      };
+    }
+  );
 
   // color is a memoized random value of "red" or "blue" or "green"
   const color = useMemo(() => {
     const colors = ["red", "blue", "green"];
-    return colors[Math.floor(Math.random() * colors.length)];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    return color;
   }, []);
+
+  useEffect(() => {
+    if (synced) {
+      updatePresence({ color });
+    }
+  }, [synced, color]);
 
   //const { others, socket } = useCursors();
 
@@ -91,7 +110,7 @@ export default function Scene() {
     const y = clientY - top;
     setMousePosition({ x, y });
     //socket?.send(JSON.stringify({ pointer: "mouse", x, y, color }));
-    console.log("mouse position", x, y);
+    //console.log("mouse position", x, y);
   };
 
   return (
@@ -107,8 +126,8 @@ export default function Scene() {
         <PerspectiveCamera makeDefault position={[0, 0, 50]} fov={10} />
         <ambientLight intensity={0.4} />
         <Light
-          x={-5 + mousePosition.x / 70}
-          y={5 - mousePosition.y / 70}
+          x={-5 + ((myself?.presence.cursor?.x ?? 1) * 728) / 70}
+          y={5 - ((myself?.presence.cursor?.y ?? 1) * 728) / 70}
           z={10}
           color={color}
         />
@@ -116,16 +135,16 @@ export default function Scene() {
         <Suspense fallback={<Loader />}>
           <Logo />
         </Suspense>
-        {/*
-      {Object.entries(others).map(([id, cursor]) => (
-        <Light
-          key={id}
-          x={-5 + cursor.x / 70}
-          y={5 - cursor.y / 70}
-          z={10}
-          color={cursor.color || "white"}
-        />
-      ))}*/}
+
+        {Array.from(otherUsers.entries()).map(([id, other]) => (
+          <Light
+            key={id}
+            x={-5 + ((other?.presence.cursor?.x ?? 1) * 728) / 70}
+            y={5 - ((other?.presence.cursor?.y ?? 1) * 728) / 70}
+            z={10}
+            color={other?.presence.color || "white"}
+          />
+        ))}
         <pointLight position={[-10, -10, -10]} intensity={400} />
         {/*<Box position={[-1.2, 0, 0]} />
       <Box position={[1.2, 0, 0]} />*/}
@@ -137,11 +156,23 @@ export default function Scene() {
           top: "0.25rem",
           left: "0.25rem",
           color: "white",
+          fontSize: "0.75rem",
+          visibility: "hidden",
         }}
       >
-        <div>mousePosition.x: {mousePosition.x}</div>
-        <div>mousePosition.y: {mousePosition.y}</div>
-        <div>mouseInCanvas: {mouseInCanvas ? "true" : "false"}</div>
+        <div>synced: {synced ? "true" : "false"}</div>
+        <div>myId: {myId}</div>
+        <div>myself: {JSON.stringify(myself)}</div>
+        <div>otherUsers count: {Array.from(otherUsers.keys()).length}</div>
+        <div>otherUsers IDs: {Array.from(otherUsers.keys()).join(", ")}</div>
+        <div>otherUsers:</div>
+        <div>
+          {Array.from(otherUsers.entries()).map(([id, user]) => (
+            <div key={id}>
+              {id}: {JSON.stringify(user)}
+            </div>
+          ))}
+        </div>
       </div>
     </>
   );
