@@ -7,7 +7,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import type { ThreeElements } from "@react-three/fiber";
 import { useHelper, PerspectiveCamera } from "@react-three/drei";
 //import { useCursors } from "@/app/providers/cursors-context";
-//import Logo, { Loader } from "@/app/components/Logo";
+import Logo, { Loader } from "./Logo";
 
 function Box(props: ThreeElements["mesh"]) {
   const meshRef = useRef<THREE.Mesh>(null!);
@@ -112,9 +112,11 @@ export default function Scene() {
           z={10}
           color={color}
         />
-        {/*<Suspense fallback={<Loader />}>
-        <Logo />
-  </Suspense>
+
+        <Suspense fallback={<Loader />}>
+          <Logo />
+        </Suspense>
+        {/*
       {Object.entries(others).map(([id, cursor]) => (
         <Light
           key={id}
