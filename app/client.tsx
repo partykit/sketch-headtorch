@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import EyeTracker from "./components/EyeTracker";
 import Debug from "./components/Debug";
 import Frame from "./components/Frame";
+import Scene from "./components/Scene";
 
 function App() {
   const [isTracking, setIsTracking] = useState(false);
@@ -15,7 +16,7 @@ function App() {
         {isTracking && <Debug />}
       </div>
       <Frame>
-        <div>Hello, World!</div>
+        <Scene />
       </Frame>
     </main>
   );

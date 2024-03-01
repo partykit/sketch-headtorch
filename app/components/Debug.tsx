@@ -110,6 +110,7 @@ export default function Debug() {
           right: 0,
           overflow: "clip",
           zIndex: 10,
+          pointerEvents: "none",
         }}
       >
         <div
