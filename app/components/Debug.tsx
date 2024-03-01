@@ -109,6 +109,7 @@ export default function Debug() {
           bottom: 0,
           right: 0,
           overflow: "clip",
+          zIndex: 10,
         }}
       >
         <div
