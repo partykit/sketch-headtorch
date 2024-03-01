@@ -4,7 +4,14 @@ import {
   type Landmark,
 } from "@mediapipe/tasks-vision";
 import FaceLandmarkManager from "../utils/FaceLandmarkManager";
-import { type Connection } from "../utils/FaceLandmarkManager";
+//import { type Connection } from "../utils/FaceLandmarkManager";
+import type { Point3D } from "../utils/Maths";
+import {
+  crossProduct,
+  vectorBetweenPoints,
+  angleBetweenVectorsWithDirection,
+  scaleToRange,
+} from "../utils/Maths";
 import { useEffect, useRef, useState } from "react";
 
 export default function Debug() {
@@ -39,16 +46,46 @@ export default function Debug() {
       landmarkCoordinates.reduce((sum, landmark) => sum + landmark.z, 0) /
       landmarkCoordinates.length;
 
-    return { x: averageX, y: averageY, z: averageZ };
+    return { x: averageX, y: averageY, z: averageZ } as Point3D;
   };
 
   const rightAverage = getAverage(FaceLandmarker.FACE_LANDMARKS_RIGHT_IRIS);
   const leftAverage = getAverage(FaceLandmarker.FACE_LANDMARKS_LEFT_IRIS);
+  const lipsAverage = getAverage(FaceLandmarker.FACE_LANDMARKS_LIPS);
+
+  const avg = (a: number, b: number) => (a + b) / 2;
   const middle = {
-    x: (rightAverage.x + leftAverage.x) / 2,
-    y: (rightAverage.y + leftAverage.y) / 2,
-    z: (rightAverage.z + leftAverage.z) / 2,
+    x: avg(rightAverage.x, leftAverage.x),
+    y: avg(rightAverage.y, leftAverage.y),
+    z: avg(rightAverage.z, leftAverage.z),
   };
+
+  const v1 = vectorBetweenPoints(rightAverage, leftAverage);
+  const v2 = vectorBetweenPoints(rightAverage, lipsAverage);
+  const normalVector = crossProduct(v1, v2);
+
+  // Projection of normal onto x-z and y-z planes
+  const normalXZ: Point3D = { x: normalVector.x, y: 0, z: normalVector.z };
+  const normalYZ: Point3D = { x: 0, y: normalVector.y, z: normalVector.z };
+
+  // Screen's z-axis
+  const screenZ: Point3D = { x: 0, y: 0, z: 1 };
+
+  // Angles
+  const angleLeftRight = angleBetweenVectorsWithDirection(
+    normalXZ,
+    screenZ,
+    normalVector
+  );
+  const angleUpDown = angleBetweenVectorsWithDirection(
+    normalYZ,
+    screenZ,
+    normalVector
+  );
+
+  // Convert angles to degrees if necessary
+  const angleLeftRightDeg = angleLeftRight * (180 / Math.PI);
+  const angleUpDownDeg = angleUpDown * (180 / Math.PI);
 
   const getBlendShape = (category: string) => {
     return results?.faceBlendshapes[0]?.categories.find(
@@ -62,36 +99,46 @@ export default function Debug() {
   const up = getBlendShape("eyeLookUpRight")?.score ?? 0;
   const down = getBlendShape("eyeLookDownRight")?.score ?? 0;
 
-  let leftright = 0.5;
-  if (left ?? 0 > 0.5) {
-    leftright = 1 - left;
-  } else {
-    leftright = right;
-  }
-
-  let updown = 0.5;
-  if (up ?? 0 > 0.5) {
-    updown = 1 - up;
-  } else {
-    updown = down;
-  }
-
   return (
     <div>
       <div
         style={{
-          position: "absolute",
-          backgroundColor: "red",
-          width: "1rem",
-          height: "1rem",
-          borderRadius: "9999px",
-          top: `${middle.y * 100}%`,
-          left: `${(1 - middle.x) * 100}%`,
+          position: "fixed",
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
+          overflow: "clip",
         }}
       >
-        &nbsp;
+        <div
+          style={{
+            position: "absolute",
+            backgroundColor: "red",
+            width: "1rem",
+            height: "1rem",
+            borderRadius: "9999px",
+            top: `calc(${scaleToRange(middle.y, 0.48, 0.57) * 100}% - 0.5rem)`,
+            left: `calc(${
+              (1 - scaleToRange(middle.x, 0.38, 0.62)) * 100
+            }% - 0.5rem)`,
+          }}
+        >
+          &nbsp;
+        </div>
       </div>
       <h3>Debug</h3>
+      <details>
+        <summary>Face tracking</summary>
+        <ul>
+          <li>Head x: {middle.x}</li>
+          <li>Head y: {middle.y}</li>
+          <li>Left-right: {angleLeftRightDeg}</li>
+          <li>{`${scaleToRange(-angleLeftRightDeg, -50, 15) * 100}%`}</li>
+          <li>Up-down: {angleUpDownDeg}</li>
+          <li>{`${scaleToRange(-angleUpDownDeg, -6, 20) * 100}%`}</li>
+        </ul>
+      </details>
       <details>
         <summary>blendShapes</summary>
         <ul>
