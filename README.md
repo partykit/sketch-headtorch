@@ -7,3 +7,7 @@ https://devlibrary.withgoogle.com/products/ml/repos/jays0606-mediapipe-facelandm
 Illustrations of facial blendShapes:
 
 https://help.wonderdynamics.com/character-creation/ai-mocap-system/markerless-face-capture/blendshapes
+
+Presence copy-and-pasted from:
+
+https://github.com/partykit/cursor-party
