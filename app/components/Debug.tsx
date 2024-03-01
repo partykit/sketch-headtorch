@@ -13,10 +13,17 @@ import {
   scaleToRange,
 } from "../utils/Maths";
 import { useEffect, useRef, useState } from "react";
+import { usePresence } from "../presence/presence-context";
 
 export default function Debug() {
   const requestRef = useRef(0);
   const [results, setResults] = useState<FaceLandmarkerResult>();
+  const { myself, updatePresence } = usePresence((state) => {
+    return {
+      myself: state.myself,
+      updatePresence: state.updatePresence,
+    };
+  });
 
   const animate = () => {
     const faceLandmarkManager = FaceLandmarkManager.getInstance();
@@ -99,6 +106,16 @@ export default function Debug() {
   const up = getBlendShape("eyeLookUpRight")?.score ?? 0;
   const down = getBlendShape("eyeLookDownRight")?.score ?? 0;
 
+  useEffect(() => {
+    updatePresence({
+      cursor: {
+        x: 1 - scaleToRange(middle.x, 0.38, 0.62),
+        y: scaleToRange(middle.y, 0.48, 0.57),
+        pointer: "mouse",
+      },
+    });
+  }, [middle.x, middle.y]);
+
   return (
     <div>
       <div
@@ -120,10 +137,8 @@ export default function Debug() {
             width: "1rem",
             height: "1rem",
             borderRadius: "9999px",
-            top: `calc(${scaleToRange(middle.y, 0.48, 0.57) * 100}% - 0.5rem)`,
-            left: `calc(${
-              (1 - scaleToRange(middle.x, 0.38, 0.62)) * 100
-            }% - 0.5rem)`,
+            top: `calc(${(myself?.presence.cursor?.y ?? 0) * 100}% - 0.5rem)`,
+            left: `calc(${(myself?.presence.cursor?.x ?? 0) * 100}% - 0.5rem)`,
           }}
         >
           &nbsp;
